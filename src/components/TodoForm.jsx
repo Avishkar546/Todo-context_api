@@ -3,7 +3,7 @@ import { useTodo } from "../context";
 
 const TodoForm = () => {
   const[todo, setTodo] = useState('');
-  const todoContext = useTodo();
+  const {addTodo} = useTodo();
 
   return (
     <form className="flex" onSubmit={(e) => e.preventDefault()}>
@@ -17,7 +17,7 @@ const TodoForm = () => {
         <button
           type="submit"
           className="rounded-r-lg bg-green-600 text-white px-3 py-1 shrink-0"
-          onClick={() => todoContext.addTodo({task:todo, completed:false})}
+          onClick={() => addTodo({task:todo, completed:false})}
         >Add</button>
       </form>
   );
