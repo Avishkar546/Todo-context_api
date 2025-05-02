@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import TodoForm from "./components/TodoForm";
-import { TodoContextProvider, useTodo } from "./context";
-import TodoItem from "./components/TodoItem";
+import { TodoContextProvider } from "./context";
+import { TodoForm, TodoItem } from "./components";
 
 function App() {
   const [taskList, setTaskList] = useState([]);
-  const [isEditable, setIsEditable] = useState(false);
 
   const addTodo = (todo) => {
     console.log(todo);
