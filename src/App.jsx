@@ -1,32 +1,53 @@
-import { useState } from "react";
-// import "./App.css";
+import { useEffect, useState } from "react";
 import TodoForm from "./components/TodoForm";
-import { TodoContextProvider } from "./context";
+import { TodoContextProvider, useTodo } from "./context";
+import TodoItem from "./components/TodoItem";
 
 function App() {
-  const [taskList, setTaskList] = useState(["abcd", "efghjikl"]);
-  const [task, setTask] = useState("");
+  const [taskList, setTaskList] = useState([]);
   const [isEditable, setIsEditable] = useState(false);
 
   const addTodo = (todo) => {
-    setTaskList(prev => [...prev, {id: Date.now(), ...todo}]);
-  }
+    console.log(todo);
+    setTaskList((prev) => [...prev, { id: Date.now(), ...todo }]);
+  };
 
   const updateTodo = (id, todo) => {
-    setTaskList(prev => prev.map(prevTodo => (prevTodo.id === id)? todo : prevTodo));
-  }
+    setTaskList((prev) =>
+      prev.map((prevTodo) => (prevTodo.id === id ? todo : prevTodo))
+    );
+  };
 
   const deleteTodo = (id) => {
-    setTaskList(prev => prev.filter(prevTodo => (prevTodo.id !== id)));
-  }
+    setTaskList((prev) => prev.filter((prevTodo) => prevTodo.id !== id));
+  };
 
   const toggleComplete = (id) => {
-    setTaskList(prev => prev.map(prevTodo => (prevTodo.id === id)? (prevTodo.completed = true) : prevTodo))
-  }
+    setTaskList((prev) =>
+      prev.map((prevTodo) =>
+        prevTodo.id === id
+          ? { ...prevTodo, completed: !prevTodo.completed }
+          : prevTodo
+      )
+    );
+  };
+
+  useEffect(() => {
+    const todos =
+      localStorage.getItem("todos") &&
+      JSON.parse(localStorage.getItem("todos"));
+    if (todos && todos.length > 0) {
+      setTaskList(todos);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(taskList));
+  }, [taskList, setTaskList]);
 
   return (
     <TodoContextProvider
-      value={{ todo, addTodo, updateTodo, deleteTodo, toggleComplete }}
+      value={{ taskList, addTodo, updateTodo, deleteTodo, toggleComplete }}
     >
       <div className="bg-[#172842] min-h-screen py-8">
         <div className="w-full max-w-2xl mx-auto shadow-md rounded-lg px-4 py-3 text-white">
@@ -34,21 +55,11 @@ function App() {
             Manage Your Todos
           </h1>
           <div className="mb-4">
-            <TodoForm setTask={setTask} setTaskList={setTaskList} task={task} />
+            <TodoForm />
           </div>
           <div className="flex flex-wrap gap-y-3">
-            <ul>
-              {taskList.map((t, index) => (
-                <div key={index}>
-                  <input type="checkbox" />
-                  <input type="text" value={t} readOnly={!isEditable} />
-                  <button onClick={() => setIsEditable((edit) => !edit)}>
-                    {isEditable ? "save" : "Edit"}
-                  </button>
-                  <button>Delete</button>
-                </div>
-              ))}
-            </ul>
+            {taskList.length > 0 &&
+              taskList.map((task) => <TodoItem todo={task} key={task.id} />)}
           </div>
         </div>
       </div>

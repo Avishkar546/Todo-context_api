@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 
 export const TodoContext = createContext({
-    todo: [
+    taskList: [
         {
             id: 1,
             task: 'Learn DSA',
